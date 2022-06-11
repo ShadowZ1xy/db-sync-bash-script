@@ -50,10 +50,18 @@ fi
 
 echo "[INFO] Clean existing db to restore it with new"
 sleep 0.2
-docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d postgres -c "CREATE DATABASE $TEMPORARY_DATABASE_NAME;" &> /dev/null
-docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$SECOND_DATABASE_NAME' AND pid <> pg_backend_pid();" &> /dev/null
-docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "DROP DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
-docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "CREATE DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
+
+if $IS_DOCKER; then
+    docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d postgres -c "CREATE DATABASE $TEMPORARY_DATABASE_NAME;" &> /dev/null
+    docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$SECOND_DATABASE_NAME' AND pid <> pg_backend_pid();" &> /dev/null
+    docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "DROP DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
+    docker exec -it $DOCKER_CONTAINER_NAME psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "CREATE DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
+else
+    psql -U $USERNAME_FOR_SECOND_DATABASE -d postgres -c "CREATE DATABASE $TEMPORARY_DATABASE_NAME;" &> /dev/null
+    psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$SECOND_DATABASE_NAME' AND pid <> pg_backend_pid();" &> /dev/null
+    psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "DROP DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
+    psql -U $USERNAME_FOR_SECOND_DATABASE -d $TEMPORARY_DATABASE_NAME -c "CREATE DATABASE $SECOND_DATABASE_NAME;" &> /dev/null
+fi
 
 echo "[INFO] Starting pg_restore to second db"
 sleep 0.2
