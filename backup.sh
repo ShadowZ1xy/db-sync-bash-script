@@ -49,7 +49,11 @@ if [[ $2 == "full" ]]; then
     fi
     echo "[INFO] Starting pg_dump from first server..."
     sleep 0.2
+    DUMP_START_TIME=$(date +%s)
     PGPASSWORD=$PASSWORD_FOR_FIRST_DATABASE $PATH_TO_PG_FOLDER/pg_dump --file "$PATH_TO_BACKUP_FOLDER/$BACKUP_FILE_NAME" --host "$HOST_FOR_FIRST_DATABASE" --port "$PORT_FOR_FIRST_DATABASE" --username "$USERNAME_FOR_FIRST_DATABASE" --verbose --format=c --blobs "$FIRST_DATABASE_NAME" >> "$LOG_FILE" 2>&1
+    DUMP_END_TIME=$(date +%s)
+    DUMP_TIME_SECONDS=$(($DUMP_END_TIME - $DUMP_START_TIME))
+    echo "[INFO] Dump takes $DUMP_TIME_SECONDS seconds"
 else
     if (( $(($FILE_COUNT)) == 0 )); then
         echo "[ERROR] Can't find backup file, pls run first with 'full' flag" 2>&1 | tee $LOG_FILE
