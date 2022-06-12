@@ -7,7 +7,6 @@ sleep 0.2
 
 TEMPORARY_DATABASE_NAME="temporary777"
 
-
 PROFILE_NAME=$1
 if [[ $1 != .* ]]; then
     PROFILE_NAME=.$1
@@ -17,19 +16,18 @@ if [[ -f "$PROFILE_NAME" ]]; then
     export $(grep -v '^#' $PROFILE_NAME | xargs)
 else 
     echo "[ERROR] Can't find profile $PROFILE_NAME"
-    exit 1 # terminate and indicate error
+    exit 1
 fi
 
 mkdir -p "$PATH_TO_BACKUP_FOLDER"
 
-
 echo "[INFO] Selected profile $1"
 sleep 0.2
 
+FILE_COUNT=`ls $PATH_TO_BACKUP_FOLDER | grep $BACKUP_FILE_NAME | wc -l`
 if [[ $2 == "full" ]]; then
     echo "[INFO] Choosed full backup"
     sleep 0.2
-    FILE_COUNT=`ls $PATH_TO_BACKUP_FOLDER | grep $BACKUP_FILE_NAME | wc -l`
     if (( $(($FILE_COUNT)) >= 10 )); then
         echo "[INFO] Backups count more then 10, deleting oldest"
         sleep 0.2
@@ -46,6 +44,11 @@ if [[ $2 == "full" ]]; then
     echo "[INFO] Starting pg_dump from first server..."
     sleep 0.2
     PGPASSWORD=$PASSWORD_FOR_FIRST_DATABASE $PATH_TO_PG_FOLDER/pg_dump --file "$PATH_TO_BACKUP_FOLDER/$BACKUP_FILE_NAME" --host "$HOST_FOR_FIRST_DATABASE" --port "$PORT_FOR_FIRST_DATABASE" --username "$USERNAME_FOR_FIRST_DATABASE" --verbose --format=c --blobs "$FIRST_DATABASE_NAME" &> /dev/null
+else
+    if (( $(($FILE_COUNT)) == 0 )); then
+        echo "[ERROR] Can't find backup file, pls run first with 'full' flag"
+        exit 1
+    fi
 fi
 
 echo "[INFO] Clean existing db to restore it with new"
