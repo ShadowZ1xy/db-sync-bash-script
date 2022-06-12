@@ -24,7 +24,7 @@ mkdir -p "$PATH_TO_BACKUP_FOLDER"
 mkdir -p "$LOGS_FOLDER"
 
 CURRENT_DATE=$(date +"%d-%m-%Y_%H-%M-%S")
-LOG_FILE="$LOGS_FOLDER/log_$CURRENT_DATE.log"
+LOG_FILE="$LOGS_FOLDER/log_${PROFILE_NAME#?}_${CURRENT_DATE}.log"
 touch "$LOG_FILE"
 
 echo "[INFO] Selected profile $1"
@@ -52,7 +52,7 @@ if [[ $2 == "full" ]]; then
     PGPASSWORD=$PASSWORD_FOR_FIRST_DATABASE $PATH_TO_PG_FOLDER/pg_dump --file "$PATH_TO_BACKUP_FOLDER/$BACKUP_FILE_NAME" --host "$HOST_FOR_FIRST_DATABASE" --port "$PORT_FOR_FIRST_DATABASE" --username "$USERNAME_FOR_FIRST_DATABASE" --verbose --format=c --blobs "$FIRST_DATABASE_NAME" >> "$LOG_FILE" 2>&1
 else
     if (( $(($FILE_COUNT)) == 0 )); then
-        echo "[ERROR] Can't find backup file, pls run first with 'full' flag"
+        echo "[ERROR] Can't find backup file, pls run first with 'full' flag" 2>&1 | tee $LOG_FILE
         exit 1
     fi
 fi
