@@ -1,4 +1,7 @@
-.*
+profiles/.*
 !/.gitignore
-!/.cleanprofile
+!profiles/.cleanprofile
 backups
+temp
+.idea
+logs
