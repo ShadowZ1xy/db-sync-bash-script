@@ -34,11 +34,11 @@ FILE_COUNT=$(ls $PATH_TO_BACKUP_FOLDER | grep -c $BACKUP_FILE_NAME)
 if [[ $2 == "full" ]]; then
     echo "[INFO] Choosed full backup"
     sleep 0.2
-    if (( $(($FILE_COUNT)) >= 30 )); then
-        echo "[INFO] Backups count more then 30, deleting oldest"
-        sleep 0.2
-        OLDEST_FILE_NAME=$(ls -t "$PATH_TO_BACKUP_FOLDER" | tail -1)
-        rm $PATH_TO_BACKUP_FOLDER/$OLDEST_FILE_NAME
+    if (( $(($FILE_COUNT)) >= 500 )); then
+        #echo "[INFO] Backups count more then 500, deleting oldest"
+        #sleep 0.2
+        #OLDEST_FILE_NAME=$(ls -t "$PATH_TO_BACKUP_FOLDER" | tail -1)
+        #rm $PATH_TO_BACKUP_FOLDER/$OLDEST_FILE_NAME
     fi
     if (( $(($FILE_COUNT)) > 0 )); then
         echo "[INFO] Renaming old backup to not overwrite it"
