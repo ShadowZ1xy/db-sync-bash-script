@@ -33,11 +33,11 @@ BINFOLDER=$(docker exec $DOCKER_CONTAINER_NAME whereis psql | awk '{split($0,a,"
 BINFOLDER=${BINFOLDER%"/psql"}
 if [[ $2 == "full" ]]; then
     echo "[INFO] Choosed full backup"
-    if (( $(($FILE_COUNT)) >= 30 )); then
-        echo "[INFO] Backups count more then 30, deleting oldest"
-        OLDEST_FILE_NAME=$(docker exec $DOCKER_CONTAINER_NAME ls -t "$PATH_TO_BACKUP_FOLDER" | tail -1)
-        docker exec $DOCKER_CONTAINER_NAME rm $PATH_TO_BACKUP_FOLDER/$OLDEST_FILE_NAME
-    fi
+    #if (( $(($FILE_COUNT)) >= 30 )); then
+        #echo "[INFO] Backups count more then 30, deleting oldest"
+        #OLDEST_FILE_NAME=$(docker exec $DOCKER_CONTAINER_NAME ls -t "$PATH_TO_BACKUP_FOLDER" | tail -1)
+        #docker exec $DOCKER_CONTAINER_NAME rm $PATH_TO_BACKUP_FOLDER/$OLDEST_FILE_NAME
+    #fi
     if (( $(($FILE_COUNT)) > 0 )); then
         echo "[INFO] Renaming old backup to not overwrite it"
         OLD_BACKUP_DATETIME=$(docker exec $DOCKER_CONTAINER_NAME date -r $PATH_TO_BACKUP_FOLDER/$BACKUP_FILE_NAME +"%d-%m-%Y_%H-%M-%S")
